@@ -3,9 +3,9 @@ const DOT: u8 = b'.';
 const END: u8 = b'$';
 
 #[derive(PartialEq, Debug, Clone)]
-pub struct Regex<'a> {
+pub struct Regex {
     binds: Binds,
-    pattern: Pattern<'a>,
+    pattern: Pattern,
 }
 
 #[derive(PartialEq, Debug, Clone)]
@@ -17,12 +17,12 @@ enum Binds {
 }
 
 #[derive(PartialEq, Debug, Clone)]
-enum Pattern<'a> {
-    NoDots(&'a str),
-    Dots(&'a str),
+enum Pattern {
+    NoDots(String),
+    Dots(String),
 }
 
-impl Pattern<'_> {
+impl Pattern {
     fn len(&self) -> usize {
         self.str().len()
     }
@@ -39,8 +39,8 @@ impl Pattern<'_> {
     }
 }
 
-impl<'a> Regex<'a> {
-    pub fn new(input: &'a str) -> Self {
+impl Regex {
+    pub fn new(input: String) -> Self {
         // Check for ^ and $ in regex
         let has_start = input.as_bytes()[0] == START;
         let has_end = input.as_bytes().last().map(|&x| x == END).unwrap_or(false);
@@ -61,12 +61,16 @@ impl<'a> Regex<'a> {
 
         let pattern_range = &input[start_idx..end_idx];
         let pattern = if input.as_bytes().contains(&DOT) {
-            Pattern::Dots(pattern_range)
+            Pattern::Dots(pattern_range.to_owned())
         } else {
-            Pattern::NoDots(pattern_range)
+            Pattern::NoDots(pattern_range.to_owned())
         };
 
         Self { binds, pattern }
+    }
+
+    pub fn new_clone(input: &str) -> Self {
+        Self::new(input.to_owned())
     }
 
     pub fn is_match(&self, text: &str) -> bool {
@@ -94,14 +98,14 @@ impl<'a> Regex<'a> {
     }
 
     fn match_knows_pos(&self, text: &str) -> bool {
-        match self.pattern {
+        match &self.pattern {
             Pattern::NoDots(x) => x == text,
             Pattern::Dots(_) => self.match_dots_pos(text),
         }
     }
 
     fn match_unknown_pos(&self, text: &str) -> bool {
-        match self.pattern {
+        match &self.pattern {
             Pattern::NoDots(x) => text.contains(x),
             Pattern::Dots(_) => self.match_dots_pos_unknown(text),
         }
