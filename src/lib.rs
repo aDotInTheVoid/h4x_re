@@ -172,39 +172,39 @@ mod tests {
     fn create() {
         let ans_1 = Regex {
             binds: Binds::Both,
-            pattern: Pattern::NoDots("win"),
+            pattern: Pattern::NoDots("win".to_string()),
         };
         let ans_2 = Regex {
             binds: Binds::Front,
-            pattern: Pattern::NoDots("win"),
+            pattern: Pattern::NoDots("win".to_string()),
         };
         let ans_3 = Regex {
             binds: Binds::Front,
-            pattern: Pattern::Dots("wi."),
+            pattern: Pattern::Dots("wi.".to_string()),
         };
         let ans_4 = Regex {
             binds: Binds::Neither,
-            pattern: Pattern::Dots("wi."),
+            pattern: Pattern::Dots("wi.".to_string()),
         };
         let ans_5 = Regex {
             binds: Binds::Neither,
-            pattern: Pattern::NoDots("wi"),
+            pattern: Pattern::NoDots("wi".to_string()),
         };
         let ans_6 = Regex {
             binds: Binds::Front,
-            pattern: Pattern::NoDots("wi"),
+            pattern: Pattern::NoDots("wi".to_string()),
         };
         let ans_7 = Regex {
             binds: Binds::Back,
-            pattern: Pattern::NoDots("win"),
+            pattern: Pattern::NoDots("win".to_string()),
         };
         let ans_8 = Regex {
             binds: Binds::Neither,
-            pattern: Pattern::NoDots("win"),
+            pattern: Pattern::NoDots("win".to_string()),
         };
         let ans_9 = Regex {
             binds: Binds::Back,
-            pattern: Pattern::Dots("wi."),
+            pattern: Pattern::Dots("wi.".to_string()),
         };
 
         let test_1 = "^win$";
@@ -216,20 +216,20 @@ mod tests {
         let test_7 = "win$";
         let test_8 = "win";
         let test_9 = "wi.$";
-        assert_eq!(Regex::new(test_1), ans_1);
-        assert_eq!(Regex::new(test_2), ans_2);
-        assert_eq!(Regex::new(test_3), ans_3);
-        assert_eq!(Regex::new(test_4), ans_4);
-        assert_eq!(Regex::new(test_5), ans_5);
-        assert_eq!(Regex::new(test_6), ans_6);
-        assert_eq!(Regex::new(test_7), ans_7);
-        assert_eq!(Regex::new(test_8), ans_8);
-        assert_eq!(Regex::new(test_9), ans_9);
+        assert_eq!(Regex::new_clone(test_1), ans_1);
+        assert_eq!(Regex::new_clone(test_2), ans_2);
+        assert_eq!(Regex::new_clone(test_3), ans_3);
+        assert_eq!(Regex::new_clone(test_4), ans_4);
+        assert_eq!(Regex::new_clone(test_5), ans_5);
+        assert_eq!(Regex::new_clone(test_6), ans_6);
+        assert_eq!(Regex::new_clone(test_7), ans_7);
+        assert_eq!(Regex::new_clone(test_8), ans_8);
+        assert_eq!(Regex::new_clone(test_9), ans_9);
     }
 
     macro_rules! reg_text {
         ($regex:expr, [$($accpet:expr),*],  [$($regect:expr),*]) => {
-            let re = Regex::new($regex);
+            let re = Regex::new_clone($regex);
             $(
                 assert!(re.is_match($accpet));
             )*
