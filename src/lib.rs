@@ -151,13 +151,12 @@ impl Regex {
     }
 
     fn match_dots_pos_unknown(&self, text: &str) -> bool {
-        dbg!();
         if text.len() < self.pattern.len() {
             return false;
         }
 
         for i in 0..=text.len() - self.pattern.len() {
-            if self.match_dots_pos(dbg!(&text[i..i + self.pattern.len()])) {
+            if self.match_dots_pos(&text[i..i + self.pattern.len()]) {
                 return true;
             }
         }
