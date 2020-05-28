@@ -97,6 +97,31 @@ impl Regex {
             .unwrap_or(false)
     }
 
+    pub fn cost(&self) -> usize {
+        (match self.binds {
+            Binds::Front | Binds::Back => 1,
+            Binds::Both => 2,
+            Binds::Neither => 0,
+        }) + self.pattern.len()
+    }
+
+    pub fn to_string(&self) -> String {
+        format!(
+            "{}{}{}",
+            if matches!(self.binds, Binds::Front | Binds::Both) {
+                "^"
+            } else {
+                ""
+            },
+            self.pattern.str(),
+            if matches!(self.binds, Binds::Back | Binds::Both) {
+                "$"
+            } else {
+                ""
+            },
+        )
+    }
+
     fn match_knows_pos(&self, text: &str) -> bool {
         match &self.pattern {
             Pattern::NoDots(x) => x == text,
@@ -130,9 +155,9 @@ impl Regex {
         if text.len() < self.pattern.len() {
             return false;
         }
-        
-        for i in 0..=text.len()-self.pattern.len() {
-            if self.match_dots_pos(dbg!(&text[i..i+self.pattern.len()])) {
+
+        for i in 0..=text.len() - self.pattern.len() {
+            if self.match_dots_pos(dbg!(&text[i..i + self.pattern.len()])) {
                 return true;
             }
         }
@@ -244,7 +269,15 @@ mod tests {
 
     #[test]
     fn dots_unknown_pos() {
-        reg_text!("w.n", [" win", "wxnxxx", "win", "winwinwin", "dsfawxndf"], ["wnwn", "dsasdf", "asdf", ""]);
-        reg_text!("..x..", ["  x  ", "xxxxx"], ["sfsdfdx", "vxdfs", "asdfdsxd"]);
+        reg_text!(
+            "w.n",
+            [" win", "wxnxxx", "win", "winwinwin", "dsfawxndf"],
+            ["wnwn", "dsasdf", "asdf", ""]
+        );
+        reg_text!(
+            "..x..",
+            ["  x  ", "xxxxx"],
+            ["sfsdfdx", "vxdfs", "asdfdsxd"]
+        );
     }
 }
