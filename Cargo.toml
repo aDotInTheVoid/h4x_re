@@ -1,6 +1,6 @@
 [package]
 name = "h4x_re"
-version = "0.2.3"
+version = "0.2.4"
 authors = ["Nixon <nixon.emoony@gmail.com>"]
 edition = "2018"
 license = "WTFPL"
