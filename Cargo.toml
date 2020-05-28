@@ -3,6 +3,9 @@ name = "h4x_re"
 version = "0.1.0"
 authors = ["Nixon <nixon.emoony@gmail.com>"]
 edition = "2018"
+license = "WTFPL"
+description = "Hacky Regex's"
+repository = "https://github.com/aDotInTheVoid/h4x_re"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
