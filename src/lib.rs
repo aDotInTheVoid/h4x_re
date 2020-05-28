@@ -24,10 +24,18 @@ enum Pattern<'a> {
 
 impl Pattern<'_> {
     fn len(&self) -> usize {
+        self.str().len()
+    }
+
+    fn str(&self) -> &str {
         match self {
-            Self::NoDots(x) => x.len(),
-            Self::Dots(x) => x.len(),
+            Self::Dots(x) => x,
+            Self::NoDots(x) => x,
         }
+    }
+
+    fn as_bytes(&self) -> &[u8] {
+        self.str().as_bytes()
     }
 }
 
@@ -62,7 +70,6 @@ impl<'a> Regex<'a> {
     }
 
     pub fn is_match(&self, text: &str) -> bool {
-        dbg!(self);
         let (start, end) = match self.binds {
             Binds::Front => (0, self.pattern.len()),
             Binds::Back => (
@@ -87,18 +94,45 @@ impl<'a> Regex<'a> {
     }
 
     fn match_knows_pos(&self, text: &str) -> bool {
-        
         match self.pattern {
-            Pattern::NoDots(x) => x==text,
-            _ => todo!(),
+            Pattern::NoDots(x) => x == text,
+            Pattern::Dots(_) => self.match_dots_pos(text),
         }
     }
 
     fn match_unknown_pos(&self, text: &str) -> bool {
         match self.pattern {
             Pattern::NoDots(x) => text.contains(x),
-            _ => unimplemented!(),
+            Pattern::Dots(_) => self.match_dots_pos_unknown(text),
         }
+    }
+
+    fn match_dots_pos(&self, text: &str) -> bool {
+        if self.pattern.len() != text.len() {
+            return false;
+        };
+        for (pat, txt) in self.pattern.as_bytes().iter().zip(text.as_bytes()) {
+            if *pat == DOT {
+                continue;
+            } else if pat != txt {
+                return false;
+            }
+        }
+        true
+    }
+
+    fn match_dots_pos_unknown(&self, text: &str) -> bool {
+        dbg!();
+        if text.len() < self.pattern.len() {
+            return false;
+        }
+        
+        for i in 0..=text.len()-self.pattern.len() {
+            if self.match_dots_pos(dbg!(&text[i..i+self.pattern.len()])) {
+                return true;
+            }
+        }
+        false
     }
 }
 
@@ -179,13 +213,6 @@ mod tests {
 
     #[test]
     fn no_dots() {
-        let test_1 = Regex::new("^win$");
-        let test_2 = Regex::new("^win");
-        let test_3 = Regex::new("wi");
-        let test_4 = Regex::new("^wi");
-        let test_5 = Regex::new("win$");
-        let test_6 = Regex::new("win");
-
         reg_text!("^win$", ["win"], ["", "winn", "wwin", "wi", "in", "banana"]);
         reg_text!(
             "^win",
@@ -197,11 +224,23 @@ mod tests {
             ["wi", "win", "pinwion", "Mario Kart wii"],
             ["w i", "we", "w"]
         );
-        reg_text!("win$", ["win", "xd win", "how to win"], ["banh", "win95", "n"]);
+        reg_text!(
+            "win$",
+            ["win", "xd win", "how to win"],
+            ["banh", "win95", "n"]
+        );
     }
 
     #[test]
-    fn tmp(){
-        assert!(Regex::new("wi").is_match("win"));
+    fn dots_known_pos() {
+        reg_text!("^wi.", ["win", "wix", "windows 2000"], ["wi", "won"]);
+        reg_text!("^w.n$", ["win", "wan", "wxn"], ["winn", " win ", "xin"]);
+        reg_text!("..n$", ["win", "..n", "pin", "impl pin", "xdin"], ["in"]);
+    }
+
+    #[test]
+    fn dots_unknown_pos() {
+        reg_text!("w.n", [" win", "wxnxxx", "win", "winwinwin", "dsfawxndf"], ["wnwn", "dsasdf", "asdf", ""]);
+        reg_text!("..x..", ["  x  ", "xxxxx"], ["sfsdfdx", "vxdfs", "asdfdsxd"]);
     }
 }
