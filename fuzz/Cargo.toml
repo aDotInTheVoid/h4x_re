@@ -1,0 +1,43 @@
+
+[package]
+name = "h4x_re-fuzz"
+version = "0.0.0"
+authors = ["Automatically generated"]
+publish = false
+edition = "2018"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.3"
+regex="1"
+lazy_static="1"
+
+[dependencies.h4x_re]
+path = ".."
+
+# Prevent this from interfering with workspaces
+[workspace]
+members = ["."]
+
+
+[lib]
+name = "h4x_re_fuzz"
+path="lib.rs"
+
+[[bin]]
+name = "literal"
+path = "fuzz_targets/literal.rs"
+
+[[bin]]
+name = "literal_start"
+path = "fuzz_targets/literal_start.rs"
+
+[[bin]]
+name = "literal_end"
+path = "fuzz_targets/literal_end.rs"
+
+[[bin]]
+name = "literal_both"
+path = "fuzz_targets/literal_both.rs"
