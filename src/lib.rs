@@ -2,13 +2,13 @@ const START: u8 = b'^';
 const DOT: u8 = b'.';
 const END: u8 = b'$';
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Hash)]
 pub struct Regex {
     binds: Binds,
     pattern: Pattern,
 }
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Hash)]
 enum Binds {
     Front,
     Back,
@@ -16,7 +16,7 @@ enum Binds {
     Neither,
 }
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Hash)]
 enum Pattern {
     NoDots(String),
     Dots(String),
