@@ -2,13 +2,13 @@ const START: u8 = b'^';
 const DOT: u8 = b'.';
 const END: u8 = b'$';
 
-#[derive(PartialEq, Debug, Clone, Hash)]
+#[derive(PartialEq, Debug, Clone, Hash, Eq)]
 pub struct Regex {
     binds: Binds,
     pattern: Pattern,
 }
 
-#[derive(PartialEq, Debug, Clone, Hash)]
+#[derive(PartialEq, Debug, Clone, Hash, Eq)]
 enum Binds {
     Front,
     Back,
@@ -16,7 +16,7 @@ enum Binds {
     Neither,
 }
 
-#[derive(PartialEq, Debug, Clone, Hash)]
+#[derive(PartialEq, Debug, Clone, Hash, Eq)]
 enum Pattern {
     NoDots(String),
     Dots(String),
@@ -68,13 +68,15 @@ impl Regex {
 
         Self { binds, pattern }
     }
-
     pub fn new_clone(input: &str) -> Self {
         Self::new(input.to_owned())
     }
 
     pub fn is_match(&self, text: &str) -> bool {
         let (start, end) = match self.binds {
+            // Front Bind's we match 0..pattern len
+            // Eg with neadle `^abc` and haystack `xyx...`,
+            // we only need to look at `xyz`
             Binds::Front => (0, self.pattern.len()),
             Binds::Back => (
                 match text.len().checked_sub(self.pattern.len()) {
@@ -137,9 +139,8 @@ impl Regex {
     }
 
     fn match_dots_pos(&self, text: &str) -> bool {
-        if self.pattern.len() != text.len() {
-            return false;
-        };
+        debug_assert_eq!(self.pattern.len(), text.len());
+
         for (pat, txt) in self.pattern.as_bytes().iter().zip(text.as_bytes()) {
             if *pat == DOT {
                 continue;
@@ -149,7 +150,6 @@ impl Regex {
         }
         true
     }
-
     fn match_dots_pos_unknown(&self, text: &str) -> bool {
         if text.len() < self.pattern.len() {
             return false;
@@ -237,6 +237,17 @@ mod tests {
                 assert!(!re.is_match($regect));
             )*
         };
+    }
+
+    #[test]
+    fn cost_and_string() {
+        for i in &[
+            "^win$", "^win", "^wi.", "wi.", "wi", "^wi", "win$", "win", "wi.$",
+        ] {
+            let reg = Regex::new_clone(i);
+            assert_eq!(reg.cost(), i.len());
+            assert_eq!(&&reg.to_string(), i);
+        }
     }
 
     #[test]

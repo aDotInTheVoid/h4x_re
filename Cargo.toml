@@ -8,7 +8,3 @@ description = "Hacky Regex's"
 repository = "https://github.com/aDotInTheVoid/h4x_re"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dev-dependencies]
-quickcheck="0.9"
-quickcheck_macros = "0.9"
