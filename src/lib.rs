@@ -289,5 +289,21 @@ mod tests {
             ["  x  ", "xxxxx"],
             ["sfsdfdx", "vxdfs", "asdfdsxd"]
         );
+        
+        reg_text!(
+            "x..",
+            ["x  ", "xzy", "zxyy", "assdxddd", "x  x"],
+            ["xx", "", "abcx", "ddxd"]
+        );
+        reg_text!(
+            "...abc",
+            ["abcabc", "xxxabc", "xxxabcxxx", "xxabcabc"],
+            ["xxabcxxx", "x"]
+        );
+        reg_text!(
+            "..abc...",
+            ["xxabcxxx", "xxabcabc"],
+            ["xabcxabc", "xabcxxx", "xxabcxx"]
+        );
     }
 }
