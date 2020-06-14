@@ -289,7 +289,7 @@ mod tests {
             ["  x  ", "xxxxx"],
             ["sfsdfdx", "vxdfs", "asdfdsxd"]
         );
-        
+
         reg_text!(
             "x..",
             ["x  ", "xzy", "zxyy", "assdxddd", "x  x"],
